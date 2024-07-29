@@ -1,1 +1,1 @@
-# DigitalPlannerApp
+DigitalPlannerApp is a streamlined solution designed to integrate and simplify the planning process for users. This application seamlessly combines both frontend and backend servers, functioning as a comprehensive platform for scheduling, task management, and productivity enhancement. Through this Python-based entry point, users can easily initiate both servers, paving the way for an intuitive and efficient planning experience.
