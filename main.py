@@ -5,26 +5,22 @@ from threading import Thread
 
 load_dotenv()
 
-backend_command = "flask run"
-frontend_command = "npm start --prefix frontend"
+def run_command(command):
+    subprocess.run(command, shell=True)
 
-backend_port = os.getenv("BACKEND_PORT", "5000")
-frontend_port = os.getenv("FRONTEND_PORT", "3000")
-
-backend_command += f" --port {backend_port}"
-frontend_command += f" --port {frontend_port}"
-
-def start_backend():
-    os.environ["FLASK_APP"] = os.getenv("FLASK_APP", "app.py")
-    os.environ["FLASK_ENV"] = os.getenv("FLASK_ENV", "development")
-    subprocess.run(backend_command, shell=True)
-
-def start_frontend():
-    subprocess.run(frontend_command, shell=True)
+def get_command(port_var, default_port, prefix=""):
+    port = os.getenv(port_var, default_port)
+    return f"{prefix} --port {port}"
 
 if __name__ == "__main__":
-    backend_thread = Thread(target=start_backend)
-    frontend_thread = Thread(target=start_frontend)
+    os.environ["FLASK_APP"] = os.getenv("FLASK_APP", "app.py")
+    os.environ["FLASK_ENV"] = os.getenv("FLASK_ENV", "development")
+
+    backend_command = get_command("BACKEND_PORT", "5000", "flask run")
+    frontend_command = get_command("FRONTEND_PORT", "3000", "npm start --prefix frontend")
+
+    backend_thread = Thread(target=run_command, args=(backend_command,))
+    frontend_thread = Thread(target=run_command, args=(frontend_command,))
 
     backend_thread.start()
     frontend_thread.start()
