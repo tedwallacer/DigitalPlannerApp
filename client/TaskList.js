@@ -3,38 +3,39 @@ import axios from 'axios';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
-  const [error, setError] = useState(''); // State to store error message
+  const [error, setError] = useState('');
+
+  const fetchTasks = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/tasks`);
+      setTasks(response.data);
+      setError('');
+    } catch (error) {
+      console.error('Failed to fetch tasks:', error);
+      setError('Failed to fetch tasks. Please try again later.');
+    }
+  };
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/tasks`);
-        setTasks(response.data);
-        setError(''); // Clear any previous errors on successful fetch
-      } catch (error) {
-        // Handle errors more gracefully
-        // Logging the error to the console is good for developers
-        console.error('Failed to fetch tasks:', error);
-        // Update the state with a user-friendly error message
-        setError('Failed to fetch tasks. Please try again later.');
-      }
-    };
-
     fetchTasks();
   }, []);
+
+  const renderTasks = () => {
+    return tasks.map(task => (
+      <li key={task.id}>
+        {task.title} - {task.description}
+      </li>
+    ));
+  };
+
+  const renderError = () => {
+    return <p style={{ color: 'red' }}>{error}</p>;
+  };
 
   return (
     <div>
       <h2>Task List</h2>
-      {/* Display error message if there's an error */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <ul>
-        {tasks.map(task => (
-          <li key={task.id}>
-            {task.title} - {task.description}
-          </li>
-        ))}
-      </ul>
+      {error ? renderError() : renderTasks()}
     </div>
   );
 };
