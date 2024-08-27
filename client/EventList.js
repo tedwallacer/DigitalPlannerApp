@@ -12,12 +12,18 @@ const EventsList = () => {
     fetchEvents();
   }, []);
 
+  const logEventAction = (message) => {
+    console.log(`[Event Logger] - ${message}`);
+  };
+
   const fetchEvents = async () => {
     try {
       const response = await axios.get(`${API_URL}/events`);
       setEvents(response.data);
+      logEventAction('Fetched events successfully.');
     } catch (error) {
       console.error('Error fetching events:', error);
+      logEventAction('Failed to fetch events.');
     }
   };
 
@@ -30,8 +36,10 @@ const EventsList = () => {
       setNewEventName('');
       setNewEventDate('');
       fetchEvents(); // Refresh the events list after adding a new event
+      logEventAction('Added a new event successfully.');
     } catch (error) {
       console.error('Error adding new event:', error);
+      logEventAction('Failed to add a new event.');
     }
   };
 
