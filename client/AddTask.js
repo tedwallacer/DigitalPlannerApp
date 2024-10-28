@@ -6,10 +6,12 @@ const AddTaskForm = () => {
     title: '',
     description: ''
   });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTaskDetails({ ...taskDetails, [name]: value });
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -20,11 +22,20 @@ const AddTaskForm = () => {
         title: '',
         description: ''
       });
+      setError("");
       alert('Task added successfully!');
     } catch (error) {
       console.error('Error adding task:', error);
-      alert('Failed to add task. Please try again.');
+      setError('Failed to add task. Please try again.');
     }
+  };
+
+  const renderError = () => {
+    return error ? (
+      <div style={{color: "red"}}>
+        {error}
+      </div>
+    ) : null;
   };
 
   return (
@@ -53,6 +64,8 @@ const AddTaskForm = () => {
             required
           />
         </div>
+
+        {renderError()}
 
         <button type="submit">Add Task</button>
       </form>
