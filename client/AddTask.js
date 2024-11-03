@@ -2,38 +2,38 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const AddTaskForm = () => {
-  const [taskDetails, setTaskDetails] = useState({
+  const [task, setTask] = useState({
     title: '',
     description: ''
   });
-  const [error, setError] = useState("");
+  const [submissionError, setSubmissionError] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setTaskDetails({ ...taskDetails, [name]: value });
-    setError("");
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setTask({ ...task, [name]: value });
+    setSubmissionError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const submitTask = async (event) => {
+    event.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/tasks`, taskDetails);
-      setTaskDetails({
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/tasks`, task);
+      setTask({
         title: '',
         description: ''
       });
-      setError("");
+      setSubmissionError("");
       alert('Task added successfully!');
     } catch (error) {
       console.error('Error adding task:', error);
-      setError('Failed to add task. Please try again.');
+      setSubmissionError('Failed to add task. Please try again.');
     }
   };
 
-  const renderError = () => {
-    return error ? (
+  const displayError = () => {
+    return submissionError ? (
       <div style={{color: "red"}}>
-        {error}
+        {submissionError}
       </div>
     ) : null;
   };
@@ -41,15 +41,15 @@ const AddTaskForm = () => {
   return (
     <div>
       <h2>Add New Task</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={submitTask}>
         <div>
           <label htmlFor="title">Title:</label>
           <input
             type="text"
             id="title"
             name="title"
-            value={taskDetails.title}
-            onChange={handleChange}
+            value={task.title}
+            onChange={handleInputChange}
             required
           />
         </div>
@@ -59,13 +59,13 @@ const AddTaskForm = () => {
           <textarea
             id="description"
             name="description"
-            value={taskDetails.description}
-            onChange={handleChange}
+            value={task.description}
+            onChange={handleInputChange}
             required
           />
         </div>
 
-        {renderError()}
+        {displayError()}
 
         <button type="submit">Add Task</button>
       </form>
