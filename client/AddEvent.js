@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AddEventForm = () => {
@@ -7,6 +7,17 @@ const AddEventForm = () => {
     date: '',
     location: '',
   });
+  const [eventQueue, setEventQueue] = useState([]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (eventQueue.length > 0) {
+        submitEvents();
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [eventQueue]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,16 +29,21 @@ const AddEventForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setEventQueue([...eventQueue, event]);
+    setEvent({
+      name: '',
+      date: '',
+      location: '',
+    });
+  };
+
+  const submitEvents = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/events`, event);
-      console.log('Event added:', response.data);
-      setEvent({
-        name: '',
-        date: '',
-        location: '',
-      });
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/events/batch`, { events: eventQueue });
+      console.log('Events added:', response.data);
+      setEventQueue([]);
     } catch (error) {
-      console.error('Error adding event:', error);
+      console.error('Error adding events:', error);
     }
   };
 
