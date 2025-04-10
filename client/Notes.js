@@ -43,6 +43,7 @@ function NoteForm({ addNote, editNote, currentNote, clearEditing }) {
 function NotesApp() {
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const addNote = (note) => setNotes((prevNotes) => [...prevNotes, note]);
 
@@ -59,15 +60,26 @@ function NotesApp() {
 
   const clearEditing = () => setCurrentNote(null);
 
+  const updateSearchTerm = (e) => setSearchTerm(e.target.value);
+
+  const filteredNotes = notes.filter(note => note.text.toLowerCase().includes(searchTerm.toLowerCase()));
+
   return (
     <div className="notesApp">
+      <input
+        type="text"
+        placeholder="Search notes..."
+        value={searchTerm}
+        onChange={updateSearchTerm}
+        className="searchBar"
+      />
       <NoteForm
         addNote={addNote}
         editNote={editNote}
         currentNote={currentNote}
         clearEditing={clearEditing}
       />
-      {notes.map((note) => (
+      {filteredNotes.map((note) => (
         <Note
           key={note.id}
           note={note}
